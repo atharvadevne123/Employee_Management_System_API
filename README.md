@@ -1,3 +1,5 @@
+![Python Package](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/python-publish.yml/badge.svg) ![Bump Version](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/bump-version.yml/badge.svg)
+
 # 👥 Employee Management System API
 
 A robust and scalable Django REST API designed for efficient management of organizational data including employees, departments, attendance records, and performance reviews. This project provides a clean and modular backend architecture that leverages Django’s powerful ORM, integrates PostgreSQL as the primary relational database, and follows best practices in API development using Django REST Framework.
