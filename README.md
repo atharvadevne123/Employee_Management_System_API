@@ -1,122 +1,183 @@
-![Python Package](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/python-publish.yml/badge.svg) ![Bump Version](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/bump-version.yml/badge.svg)
+![CI](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/ci.yml/badge.svg)
+![Python Package](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/python-publish.yml/badge.svg)
+![Bump Version](https://github.com/atharvadevne123/Employee_Management_System_API/actions/workflows/bump-version.yml/badge.svg)
 
-# 👥 Employee Management System API
+# Employee Management System API
 
-A robust and scalable Django REST API designed for efficient management of organizational data including employees, departments, attendance records, and performance reviews. This project provides a clean and modular backend architecture that leverages Django’s powerful ORM, integrates PostgreSQL as the primary relational database, and follows best practices in API development using Django REST Framework.
-
-The application includes secure authentication using JWT (JSON Web Tokens), allowing protected access to sensitive endpoints. It also features flexible filtering, pagination, and sorting mechanisms to handle large datasets effectively.
-
-To enhance developer experience and ensure seamless API testing and exploration, the project integrates Swagger (via drf-yasg) for auto-generated and interactive API documentation.
-
-This API serves as a foundational backend for HR or employee management systems and is designed to be easily extendable for features like analytics, role-based access control, or integration with frontend dashboards.
+A robust Django REST API for managing employees, departments, attendance records, and performance reviews. Built with PostgreSQL, JWT authentication, and Swagger for interactive API exploration.
 
 ---
 
-## 🚀 Features
+## Features
 
-- Django 4.x + Django REST Framework
-- PostgreSQL integration via `django-environ`
-- Token-based authentication using JWT (SimpleJWT)
-- CRUD APIs for:
-  - Employees
-  - Departments
-  - Attendance Records
-  - Performance Reviews
-- Filtering, Sorting, and Pagination
-- Swagger/OpenAPI docs at `/swagger/`
-- Database seeding using Faker
-- (Optional) Chart.js-based analytics
+- Django 4.2 + Django REST Framework
+- JWT authentication via SimpleJWT
+- CRUD APIs: Employees, Departments, Attendance, Performance Reviews
+- Filtering, search, sorting, and pagination on all endpoints
+- Swagger/OpenAPI docs at `/swagger/` and `/redoc/`
+- `/api/health/` and `/api/version/` utility endpoints
+- Database seeding with 50 fake employees (Faker)
+- GitHub Actions CI (lint + tests on Python 3.10/3.11/3.12)
+- Docker + docker-compose with PostgreSQL
+- 60%+ test coverage with pytest
 
 ---
 
-## 🛠️ Project Structure
+## Project Structure
+
 ```
-employee_project/
-├── employees/
-├── attendance/
-├── employee_project/
-├── templates/
-├── manage.py
+Employee_Management_System_API/
+├── employee_project/        # Django project config (settings, urls, wsgi)
+├── employees/               # Employee, Department, PerformanceReview models + API
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   ├── urls.py
+│   └── management/commands/seed_data.py
+├── attendance/              # AttendanceRecord model + API
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   └── urls.py
+├── tests/                   # pytest test suite
+├── .github/workflows/ci.yml
+├── Dockerfile
+├── docker-compose.yml
+├── Makefile
 ├── requirements.txt
-├── .env.example
+├── pyproject.toml
+└── .env.example
 ```
+
 ---
 
-## 📦 Setup Instructions
-
-### 1. Clone the Repository
+## Quick Start
 
 ```bash
-git clone https://github.com/your-username/employee-management-system.git
-cd employee-management-system
-```
-2. Create and Activate a Virtual Environment
-```
-python3 -m venv venv
-source venv/bin/activate
-```
-3. Install Dependencies
-```
+git clone https://github.com/atharvadevne123/Employee_Management_System_API.git
+cd Employee_Management_System_API
+
+# Install dependencies
 pip install -r requirements.txt
-```
-4. Configure .env File
 
-Create a .env file based on .env.example:
-```
-DB_NAME=employee_db
-DB_USER=postgres
-DB_PASSWORD=yourpassword
-DB_HOST=localhost
-DB_PORT=5432
-SECRET_KEY=your-secret-key
-DEBUG=True
-ALLOWED_HOSTS=127.0.0.1,localhost
-```
+# Configure environment
+cp .env.example .env
 
-⸻
+# Run migrations and seed data (SQLite for local dev)
+make migrate
+make seed
 
-🗃️ Database Setup
-
-1. Make Migrations
-```
-python manage.py makemigrations
-python manage.py migrate
-```
-2. Seed the Database
-```
-python manage.py seed_data
-```
-Creates 50 fake employees with attendance and performance history.
-
-⸻
-
-🔐 Authentication
-
-Uses JWT Authentication via SimpleJWT.
-
-Obtain Token:
-```
-POST /api/token/
-```
-Refresh Token:
-```
-POST /api/token/refresh/
-```
-Include token in headers:
-```
-Authorization: Bearer <your_token>
+# Start the development server
+make run
+# API is at http://127.0.0.1:8000/
+# Swagger UI is at http://127.0.0.1:8000/swagger/
 ```
 
-⸻
-
-🧪 API Documentation
-
-Interactive docs available at:
-```
-/swagger/
-
-```
 ---
-Author
 
-### Atharva Devne ### 
+## Docker Setup
+
+```bash
+cp .env.example .env
+# Edit .env with your PostgreSQL credentials
+make docker-build
+make docker-up
+# API available at http://localhost:8000/
+```
+
+---
+
+## Authentication
+
+All endpoints except `/api/health/`, `/api/version/`, and `/swagger/` require JWT authentication.
+
+**Obtain token:**
+```bash
+curl -X POST http://localhost:8000/api/token/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "admin", "password": "password"}'
+```
+
+**Use token:**
+```bash
+curl http://localhost:8000/api/employees/employees/ \
+  -H "Authorization: Bearer <your_access_token>"
+```
+
+**Refresh token:**
+```bash
+curl -X POST http://localhost:8000/api/token/refresh/ \
+  -H "Content-Type: application/json" \
+  -d '{"refresh": "<your_refresh_token>"}'
+```
+
+---
+
+## API Reference
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health/` | Liveness probe |
+| GET | `/api/version/` | API version |
+| POST | `/api/token/` | Obtain JWT |
+| POST | `/api/token/refresh/` | Refresh JWT |
+| GET/POST | `/api/employees/departments/` | List/create departments |
+| GET/PUT/PATCH/DELETE | `/api/employees/departments/{id}/` | Retrieve/update/delete department |
+| GET/POST | `/api/employees/employees/` | List/create employees |
+| GET/PUT/PATCH/DELETE | `/api/employees/employees/{id}/` | Retrieve/update/delete employee |
+| GET | `/api/employees/employees/{id}/reviews/` | Employee's performance reviews |
+| GET | `/api/employees/employees/by-department/` | Employee counts by department |
+| GET/POST | `/api/employees/performance-reviews/` | List/create reviews |
+| GET/PUT/PATCH/DELETE | `/api/employees/performance-reviews/{id}/` | Retrieve/update/delete review |
+| GET/POST | `/api/attendance/records/` | List/create attendance records |
+| GET/PUT/PATCH/DELETE | `/api/attendance/records/{id}/` | Retrieve/update/delete record |
+
+**Query parameters (all list endpoints):**
+- `search=<text>` — full-text search
+- `ordering=<field>` — sort ascending, `-<field>` for descending
+- `page=<n>` — pagination (20 per page)
+- `status=<value>` — filter by status field
+- `department=<id>` — filter employees by department
+
+---
+
+## Testing
+
+```bash
+make test
+# or
+pytest tests/ -v --cov=employees --cov=attendance
+```
+
+---
+
+## Architecture
+
+```
+Client
+  |
+  v
+[Nginx / Load Balancer]
+  |
+  v
+[Gunicorn + Django REST Framework]
+  |
+  +---> JWT Auth (SimpleJWT)
+  +---> employees/ (Employee, Department, PerformanceReview ViewSets)
+  +---> attendance/ (AttendanceRecord ViewSet)
+  |
+  v
+[PostgreSQL]
+```
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+---
+
+## Author
+
+**Atharva Devne** — [devneatharva@gmail.com](mailto:devneatharva@gmail.com)
