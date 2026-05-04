@@ -30,6 +30,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "employees.middleware.RequestIDMiddleware",
+    "employees.middleware.RequestLoggingMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
