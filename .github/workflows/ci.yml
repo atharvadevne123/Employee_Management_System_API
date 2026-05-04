@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Lint with ruff
+        run: ruff check . --select E,F,W,I --ignore E501
+
+      - name: Run Django system checks
+        run: python manage.py check
+        env:
+          USE_SQLITE: "True"
+          SECRET_KEY: "ci-test-secret-key"
+
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v --tb=short \
+            --cov=employees \
+            --cov=attendance \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            --cov-fail-under=60
+        env:
+          USE_SQLITE: "True"
+          SECRET_KEY: "ci-test-secret-key"
+          DJANGO_SETTINGS_MODULE: employee_project.settings
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: matrix.python-version == '3.11'
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 14
