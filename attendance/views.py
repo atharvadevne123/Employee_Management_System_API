@@ -7,6 +7,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from .filters import AttendanceFilter
 from .models import AttendanceRecord
 from .serializers import AttendanceRecordSerializer
 
@@ -20,7 +21,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
     serializer_class = AttendanceRecordSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["employee", "status", "date"]
+    filterset_class = AttendanceFilter
     search_fields = ["employee__first_name", "employee__last_name", "notes"]
     ordering_fields = ["date", "check_in", "created_at"]
     ordering = ["-date"]

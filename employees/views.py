@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from .filters import EmployeeFilter, PerformanceReviewFilter
 from .models import Department, Employee, PerformanceReview
 from .serializers import (
     DepartmentSerializer,
@@ -52,7 +53,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["status", "department", "job_title"]
+    filterset_class = EmployeeFilter
     search_fields = ["first_name", "last_name", "email", "job_title"]
     ordering_fields = ["last_name", "hire_date", "salary", "created_at"]
     ordering = ["last_name"]
@@ -112,7 +113,7 @@ class PerformanceReviewViewSet(viewsets.ModelViewSet):
     serializer_class = PerformanceReviewSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ["employee", "rating"]
+    filterset_class = PerformanceReviewFilter
     search_fields = ["reviewer", "comments"]
     ordering_fields = ["review_date", "created_at"]
     ordering = ["-review_date"]
