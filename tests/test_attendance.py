@@ -1,7 +1,7 @@
 """Tests for the attendance API endpoints."""
 from __future__ import annotations
 
-from datetime import date, time
+from datetime import date
 
 import pytest
 

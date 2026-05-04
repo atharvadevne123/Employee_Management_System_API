@@ -49,7 +49,8 @@ class AttendanceRecord(models.Model):
     def hours_worked(self) -> float | None:
         """Calculate hours worked from check_in and check_out times."""
         if self.check_in and self.check_out:
-            from datetime import datetime, date as dt_date
+            from datetime import date as dt_date
+            from datetime import datetime
 
             base = dt_date.today()
             ci = datetime.combine(base, self.check_in)

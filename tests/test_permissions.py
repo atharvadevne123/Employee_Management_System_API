@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import pytest
-from django.contrib.auth.models import User
 
 
 @pytest.mark.django_db

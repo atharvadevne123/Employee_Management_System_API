@@ -52,7 +52,7 @@ class TestJWTAuth:
 
     def test_protected_endpoint_with_valid_token(self, api_client):
         """Accessing protected endpoint with valid token returns 200."""
-        user = User.objects.create_user(username="tokenuser", password="tokenpass99")
+        User.objects.create_user(username="tokenuser", password="tokenpass99")
         obtain = api_client.post(
             "/api/token/",
             {"username": "tokenuser", "password": "tokenpass99"},
