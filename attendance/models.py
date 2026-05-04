@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import date as date_type
 from typing import ClassVar
 
 from django.db import models
@@ -29,7 +30,7 @@ class AttendanceRecord(models.Model):
         on_delete=models.CASCADE,
         related_name="attendance_records",
     )
-    date = models.DateField(default=timezone.now)
+    date = models.DateField(default=date_type.today)
     check_in = models.TimeField(null=True, blank=True)
     check_out = models.TimeField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="present")

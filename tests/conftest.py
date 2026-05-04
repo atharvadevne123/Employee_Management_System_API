@@ -16,11 +16,6 @@ from attendance.models import AttendanceRecord  # noqa: E402
 from employees.models import Department, Employee, PerformanceReview  # noqa: E402
 
 
-@pytest.fixture(scope="session")
-def django_db_setup():
-    """Use the default test database."""
-
-
 @pytest.fixture
 def department(db) -> Department:
     """Return a saved Department fixture."""

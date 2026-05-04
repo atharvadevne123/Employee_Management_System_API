@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import date
 from typing import ClassVar
 
 from django.db import models
@@ -47,7 +48,7 @@ class Employee(models.Model):
     )
     job_title = models.CharField(max_length=150)
     salary = models.DecimalField(max_digits=12, decimal_places=2, default=0)
-    hire_date = models.DateField(default=timezone.now)
+    hire_date = models.DateField(default=date.today)
     status = models.CharField(
         max_length=20, choices=EMPLOYMENT_STATUS_CHOICES, default="active"
     )
@@ -81,7 +82,7 @@ class PerformanceReview(models.Model):
         Employee, on_delete=models.CASCADE, related_name="performance_reviews"
     )
     reviewer = models.CharField(max_length=200)
-    review_date = models.DateField(default=timezone.now)
+    review_date = models.DateField(default=date.today)
     rating = models.CharField(max_length=30, choices=RATING_CHOICES)
     comments = models.TextField(blank=True, default="")
     goals = models.TextField(blank=True, default="")
