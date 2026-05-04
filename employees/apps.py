@@ -11,4 +11,5 @@ class EmployeesConfig(AppConfig):
     name = "employees"
 
     def ready(self) -> None:
-        """Perform app initialization on startup."""
+        """Connect signals on startup."""
+        import employees.signals  # noqa: F401
