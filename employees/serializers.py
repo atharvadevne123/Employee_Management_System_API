@@ -4,6 +4,7 @@ from __future__ import annotations
 from rest_framework import serializers
 
 from .models import Department, Employee, PerformanceReview
+from .validators import validate_job_title, validate_phone_number, validate_salary_range
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -77,10 +78,16 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return value.lower()
 
     def validate_salary(self, value: float) -> float:
-        """Ensure salary is non-negative."""
-        if value < 0:
-            raise serializers.ValidationError("Salary cannot be negative.")
-        return value
+        """Delegate salary validation to the shared validator."""
+        return validate_salary_range(value)
+
+    def validate_phone(self, value: str) -> str:
+        """Delegate phone validation to the shared validator."""
+        return validate_phone_number(value)
+
+    def validate_job_title(self, value: str) -> str:
+        """Delegate job_title validation to the shared validator."""
+        return validate_job_title(value)
 
 
 class EmployeeListSerializer(serializers.ModelSerializer):
